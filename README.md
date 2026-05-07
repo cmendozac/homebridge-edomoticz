@@ -3,7 +3,9 @@
 [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 
 # Homebridge-eDomoticz
-This is a plugin for [Homebridge](https://github.com/nfarina/homebridge) and [Homebridge Config UI X Support](https://github.com/oznu/homebridge-config-ui-x) and [Domoticz](https://github.com/domoticz/domoticz).
+This is a plugin for [Homebridge](https://github.com/nfarina/homebridge) v1.x and [Homebridge Config UI X Support](https://github.com/oznu/homebridge-config-ui-x) and [Domoticz](https://github.com/domoticz/domoticz).
+
+It doesn't work with Homebridge v2.x
 
 ## Supports:
 <details>
