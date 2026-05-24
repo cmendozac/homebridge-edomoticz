@@ -2,26 +2,24 @@
 ![npm](https://img.shields.io/npm/dt/homebridge-edomoticz?label=Downloads&style=flat-square)
 [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 
-# Homebridge-eDomoticz
-This is a plugin for [Homebridge](https://github.com/nfarina/homebridge) v1.x and [Homebridge Config UI X Support](https://github.com/oznu/homebridge-config-ui-x) and [Domoticz](https://github.com/domoticz/domoticz).
+# Homebridge-eDomoticz (Homebridge 2.x fork)
+This is a plugin for [Homebridge](https://github.com/nfarina/homebridge) v1.x and v2.x and [Homebridge Config UI X Support](https://github.com/oznu/homebridge-config-ui-x) and [Domoticz](https://github.com/domoticz/domoticz).
 
-Compatible with Homebridge v1.x and v2.x via this fork (see banner below).
-
-> ## Fork compatible con Homebridge 2.x
+> ## Homebridge 2.x compatible fork
 >
-> Este es un fork del plugin original
-> [PatchworkBoy/homebridge-eDomoticz](https://github.com/PatchworkBoy/homebridge-eDomoticz)
-> adaptado para Homebridge 2.x / HAP-NodeJS v2.x.
+> This is a fork of the original plugin
+> [PatchworkBoy/homebridge-eDomoticz](https://github.com/PatchworkBoy/homebridge-eDomoticz),
+> adapted for Homebridge 2.x / HAP-NodeJS v2.x.
 >
-> Funcionalmente equivalente al plugin original v2.1.50. Cambios:
+> Functionally equivalent to upstream v2.1.50. Changes:
 >
-> - Clases Service/Characteristic migradas a sintaxis ES6 (`class extends`)
-> - Resolución de enums HAP (`Formats`/`Perms`/`Units`) con fallback v1/v2
+> - Service/Characteristic classes migrated to ES6 syntax (`class extends`)
+> - HAP enums (`Formats`/`Perms`/`Units`) resolved via v1/v2 fallback
 >
-> El plugin original no recibe mantenimiento activo desde septiembre de 2024.
+> The original plugin has not been actively maintained since September 2024.
 >
-> **Issues sobre este fork**: https://github.com/cmendozac/homebridge-edomoticz/issues
-> **Plugin original (sin mantenimiento HB 2.x)**: https://github.com/PatchworkBoy/homebridge-eDomoticz
+> **Issues about this fork**: https://github.com/cmendozac/homebridge-edomoticz/issues
+> **Original plugin (no HB 2.x maintenance)**: https://github.com/PatchworkBoy/homebridge-eDomoticz
 
 ---
 
@@ -71,8 +69,8 @@ Compatible with Homebridge v1.x and v2.x via this fork (see banner below).
 sudo npm install -g --unsafe-perm github:cmendozac/homebridge-edomoticz#v3.0.1
 ```
 
-> Este fork no se publica en npm. Se instala directamente desde GitHub.
-> El plugin original sí está en npm pero como versión 2.1.50, incompatible con Homebridge 2.x.
+> This fork is not published to npm. It is installed directly from GitHub.
+> The original plugin is on npm but only as v2.1.50, which is incompatible with Homebridge 2.x.
 
 ## Update
 
