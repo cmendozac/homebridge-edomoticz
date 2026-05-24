@@ -291,7 +291,7 @@ module.exports = function(homebridge) {
 | `Types = homebridge.hapLegacyTypes` huérfano, `hapLegacyTypes` podría no existir en HB 2.x | Muy baja | `Types` no se usa en ningún sitio. Inocuo. Se puede comentar/eliminar como limpieza opcional. |
 | UUIDs colisionantes en `eDomoticz:powermeter:customservice` (AMP/VOLT/Meter) | Histórica | **Preservar exactamente** por estabilidad de pairings. No corregir. |
 | `Helper.fixInheritance` definido pero sin uso | Cosmético | Dejar en paz para no introducir ruido en el diff. |
-| `request` callback en `domoticz.js:51,211` invoca `callback()` indefinido | **Bug latente preexistente** | Fuera de alcance — sólo se dispara en rama de error de red. Anotar como issue futuro. |
+| `request` callback en `domoticz.js:51,211` invoca `callback()` indefinido | **Bug latente preexistente** | Resuelto en v3.0.2 (commit aparte). |
 
 ---
 

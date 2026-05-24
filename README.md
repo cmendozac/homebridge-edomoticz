@@ -66,7 +66,7 @@ This is a plugin for [Homebridge](https://github.com/nfarina/homebridge) v1.x an
 ## Installation
 
 ```
-sudo npm install -g --unsafe-perm github:cmendozac/homebridge-edomoticz#v3.0.1
+sudo npm install -g --unsafe-perm github:cmendozac/homebridge-edomoticz#v3.0.2
 ```
 
 > This fork is not published to npm. It is installed directly from GitHub.

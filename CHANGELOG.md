@@ -5,6 +5,11 @@ Todos los cambios relevantes de este fork.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versionado [SemVer](https://semver.org/).
 
+## [3.0.2] - 2026-05-25
+
+### Fixed
+- Pre-existing latent bug carried over from upstream v2.1.50: `lib/domoticz.js` invocaba un `callback()` inexistente en dos ramas de error de red (líneas 51 y 211, dentro de `Domoticz.settings` y `Domoticz.updateWithURL`). Si esa rama llegaba a ejecutarse (caída de red contra Domoticz, código HTTP != 200, JSON corrupto), Node lanzaba `ReferenceError: callback is not defined` y mataba el plugin justo cuando ya estaba lidiando con un error. Las dos líneas se eliminan (eran código muerto que nunca se ejecutó correctamente). El logging del error se preserva.
+
 ## [3.0.1] - 2026-05-24
 
 ### Fixed
