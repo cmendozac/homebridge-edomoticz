@@ -305,3 +305,50 @@ module.exports = function(homebridge) {
 ---
 
 **Estado: Fase 1 completada. Esperando OK para entrar en Fase 2.**
+
+---
+
+## 10. Descubrimiento en Fase 3 — segundo breaking de HAP v2 (post-mortem)
+
+El reconocimiento de Fase 1 identificó el patrón pre-ES6 + `util.inherits` como única causa raíz del crash reportado. Durante Fase 3, el smoke test reforzado (instanciación de clases representativas, no sólo carga del módulo) reveló una **segunda incompatibilidad no documentada en el reporte original ni detectable con un test de "el módulo carga"**.
+
+### Diagnóstico
+
+HAP-NodeJS v2 movió los enums `Formats`, `Perms` y `Units` de propiedades estáticas de la clase `Characteristic` a la raíz del módulo HAP. Comprobado empíricamente con `@homebridge/hap-nodejs@2.1.6`:
+
+    hap.Characteristic.Formats: undefined          ← era el path en HAP v1
+    hap.Formats:                { BOOL, INT, FLOAT, STRING, UINT8, ... }
+    hap.Perms, hap.Units:       también en raíz
+
+Las ~42 referencias a `Characteristic.Formats.X`, `Characteristic.Perms.X` y `Characteristic.Units.X` en los constructores de `lib/services.js` rompían con:
+
+    TypeError: Cannot read properties of undefined (reading 'FLOAT')
+        at new eDomoticzServices.CurrentConsumption (lib/services.js:58:48)
+
+Las clases predefinidas (`Characteristic.CurrentTemperature`, `Characteristic.CurrentRelativeHumidity`) sí siguen colgadas de `Characteristic` en HAP v2, por lo que no requirieron migración — sólo los enums.
+
+### Fix aplicado (commit `0aa52e7`)
+
+La firma de `initServices` se amplió a `(Service, Characteristic, UUID, hap)`. Los enums se resuelven con fallback bidireccional:
+
+```js
+const Formats = (Characteristic && Characteristic.Formats) || (hap && hap.Formats);
+const Perms   = (Characteristic && Characteristic.Perms)   || (hap && hap.Perms);
+const Units   = (Characteristic && Characteristic.Units)   || (hap && hap.Units);
+
+if (!Formats || !Perms || !Units) {
+    throw new Error('homebridge-edomoticz: cannot resolve HAP Formats/Perms/Units …');
+}
+```
+
+Y las 42 referencias en los constructores se sustituyeron mecánicamente:
+
+    Characteristic.Formats.X  →  Formats.X
+    Characteristic.Perms.X    →  Perms.X
+    Characteristic.Units.X    →  Units.X
+
+Sin tocar UUIDs, displayNames, ni nada más.
+
+### Lección metodológica
+
+El smoke test inicial propuesto en el plan ("el módulo carga sin errores") habría pasado con verde tras la migración a `class extends`, dejando esta segunda incompatibilidad como sorpresa al cargar el plugin en Homebridge real. El smoke test **reforzado** (instanciar al menos una clase de cada categoría, no sólo cargar) detectó el problema en entorno controlado y permitió el fix antes del despliegue. **Vale la pena el coste extra del test reforzado.**
