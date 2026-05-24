@@ -30,7 +30,7 @@ module.exports = function(homebridge) {
     // (Service / Characteristic) are available. Replaces the previous pattern
     // of pre-ES6 constructors + util.inherits, which crashes under HAP-NodeJS
     // v2 ("Class constructor Service cannot be invoked without 'new'").
-    initServices(Service, Characteristic, UUID);
+    initServices(Service, Characteristic, UUID, homebridge.hap);
 
     //homebridge.registerAccessory("homebridge-edomoticz", "eDomoticz", eDomoticzAccessory);
     homebridge.registerPlatform("homebridge-edomoticz", "eDomoticz", eDomoticzPlatform, true);
