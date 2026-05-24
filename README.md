@@ -5,7 +5,25 @@
 # Homebridge-eDomoticz
 This is a plugin for [Homebridge](https://github.com/nfarina/homebridge) v1.x and [Homebridge Config UI X Support](https://github.com/oznu/homebridge-config-ui-x) and [Domoticz](https://github.com/domoticz/domoticz).
 
-It doesn't work with Homebridge v2.x
+Compatible with Homebridge v1.x and v2.x via this fork (see banner below).
+
+> ## Fork compatible con Homebridge 2.x
+>
+> Este es un fork del plugin original
+> [PatchworkBoy/homebridge-eDomoticz](https://github.com/PatchworkBoy/homebridge-eDomoticz)
+> adaptado para Homebridge 2.x / HAP-NodeJS v2.x.
+>
+> Funcionalmente equivalente al plugin original v2.1.50. Cambios:
+>
+> - Clases Service/Characteristic migradas a sintaxis ES6 (`class extends`)
+> - Resolución de enums HAP (`Formats`/`Perms`/`Units`) con fallback v1/v2
+>
+> El plugin original no recibe mantenimiento activo desde septiembre de 2024.
+>
+> **Issues sobre este fork**: https://github.com/cmendozac/homebridge-edomoticz/issues
+> **Plugin original (sin mantenimiento HB 2.x)**: https://github.com/PatchworkBoy/homebridge-eDomoticz
+
+---
 
 ## Supports:
 <details>
@@ -49,15 +67,12 @@ It doesn't work with Homebridge v2.x
 
 ## Installation
 
-**Option 1: Install via Homebridge Config UI X:**
-
- 1. Navigate to the Plugins page in in [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x).
- 2. Search for "domoticz" and install homebridge-edomoticz.
-
-**Option 2: Manually Install:**
 ```
-sudo npm install -g homebridge-edomoticz
+sudo npm install -g --unsafe-perm github:cmendozac/homebridge-edomoticz#v3.0.1
 ```
+
+> Este fork no se publica en npm. Se instala directamente desde GitHub.
+> El plugin original sí está en npm pero como versión 2.1.50, incompatible con Homebridge 2.x.
 
 ## Update
 
@@ -185,3 +200,6 @@ In short, if you do not have an AppleTV4, HomePod, or iPad running iOS13 on your
 
 ### Logging
 Complies with Homebridge's native logging & debugging methodology - see https://github.com/nfarina/homebridge/wiki/Basic-Troubleshooting
+
+### Todo:
+- [x] homebridge [plugin 2.0](https://github.com/nfarina/homebridge/pull/497) support (this fork)
