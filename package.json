@@ -4,7 +4,7 @@
   "description": "homebridge-plugin for Domoticz https://github.com/nfarina/homebridge",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/load-plugin.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,10 @@
     "inherits": "^2.0.1",
     "mqtt": "^2.15.0",
     "request": "^2.81.0"
+  },
+  "devDependencies": {
+    "@homebridge/hap-nodejs": "^2.1.0",
+    "homebridge": "^2.0.0"
   },
   "author": {
     "name": "PatchworkBoy",
