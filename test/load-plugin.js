@@ -154,6 +154,53 @@ for (const c of cases) {
     }
 }
 
+// Assert cached characteristics with poisoned perms get healed on restore.
+// Simulates what Homebridge hands to configureAccessory: a PlatformAccessory
+// whose services were deserialized from cachedAccessories, where custom
+// characteristics are generic hap.Characteristic instances carrying the
+// persisted props. A cache written by 3.0.0-3.0.2 under HAP v2 has
+// perms [null, "ev"]; Helper.healCustomCharacteristicPerms must fix exactly
+// those and leave healthy ones (and non-perms props) alone.
+{
+    const Helper = require('../lib/helper.js').Helper;
+    const hapPerms = hap.Perms || (hap.Characteristic && hap.Characteristic.Perms);
+    const PR = hapPerms.PAIRED_READ;
+    const good = new eDomoticzServices.Barometer();
+    const poisoned = hap.Characteristic.deserialize({
+        displayName: good.displayName,
+        UUID: good.UUID,
+        props: { format: good.props.format, unit: good.props.unit, perms: [null, 'ev'] },
+        value: 1013,
+    });
+    const healthy = hap.Characteristic.deserialize({
+        displayName: 'Consumption',
+        UUID: new eDomoticzServices.CurrentConsumption().UUID,
+        props: { format: 'float', unit: 'W', perms: [PR, 'ev'] },
+        value: 12,
+    });
+    const svc = new hap.Service('Cached Weather', new eDomoticzServices.WeatherService('x').UUID, 'sub');
+    svc.addCharacteristic(poisoned);
+    svc.addCharacteristic(healthy);
+    const fakePlatformAccessory = { services: [svc] };
+
+    const healed = Helper.healCustomCharacteristicPerms(fakePlatformAccessory, eDomoticzServices, hap.Characteristic, PR);
+    const after = poisoned.props.perms;
+    const problems = [];
+    if (healed !== 1) problems.push('expected exactly 1 healed characteristic, got ' + healed);
+    if (after.indexOf(PR) === -1 || after.some(function (x) { return x == null; })) problems.push('poisoned perms not repaired: ' + JSON.stringify(after));
+    if (poisoned.props.unit !== good.props.unit) problems.push('unit was altered: ' + poisoned.props.unit);
+    if (JSON.stringify(healthy.props.perms) !== JSON.stringify([PR, 'ev'])) problems.push('healthy perms were altered: ' + JSON.stringify(healthy.props.perms));
+    const second = Helper.healCustomCharacteristicPerms(fakePlatformAccessory, eDomoticzServices, hap.Characteristic, PR);
+    if (second !== 0) problems.push('heal is not idempotent, second pass healed ' + second);
+    if (problems.length) {
+        failed++;
+        console.error('  FAIL cache heal:');
+        problems.forEach(function (m) { console.error('         ' + m); });
+    } else {
+        console.log('  OK   cache heal: poisoned [null,"ev"] -> ' + JSON.stringify(after) + ', healthy untouched, idempotent');
+    }
+}
+
 // Assert the historical collision is preserved: same UUID across the 3
 // services, distinct subtypes.
 if (failed === 0 && collisionUUIDs.length === 3) {
