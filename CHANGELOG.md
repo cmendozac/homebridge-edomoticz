@@ -5,6 +5,17 @@ All notable changes to this fork.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning [SemVer](https://semver.org/).
 
+## [3.0.4] - 2026-09-11
+
+### Fixed
+- **Upgrading to 3.0.3 was not enough on an existing install.** Homebridge persists every characteristic's `props` (perms included) in `cachedAccessories` and HAP-NodeJS restores them verbatim, so a cache written by 3.0.0-3.0.2 under HAP v2 kept publishing the custom characteristics with `perms: [null, "ev"]` after the upgrade, and iOS kept refusing to pair until `accessories/cachedAccessories` was deleted by hand. The plugin now repairs the perms of cached custom characteristics on restore (`configureAccessory`), touching only `perms` and logging how many were repaired. Healthy caches are left untouched.
+
+### Added
+- Smoke test covers the cache repair: a deserialized characteristic with `[null, "ev"]` is healed, a healthy one is untouched, and a second pass is a no-op.
+
+### Notes
+- If pairing still fails with "Accessory not reachable" after this, try another mDNS advertiser in the Homebridge UI (Settings > Network). On the reference setup Avahi worked where Bonjour HAP did not; that is a Homebridge/network matter, not a plugin one.
+
 ## [3.0.3] - 2026-09-11
 
 ### Fixed
