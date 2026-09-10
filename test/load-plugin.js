@@ -123,6 +123,37 @@ for (const c of cases) {
     }
 }
 
+// Assert every custom Characteristic is readable on the wire.
+// HAP-NodeJS v2 removed the deprecated Perms.READ / Perms.WRITE aliases
+// (only PAIRED_READ / PAIRED_WRITE remain), so a stale alias silently
+// resolves to undefined and the characteristic is published with
+// perms [null, "ev"]. iOS rejects the whole bridge at pairing with
+// "Accessory out of compliance" (upstream PR #297 report), and HAP-NodeJS
+// itself answers reads with WRITE_ONLY_CHARACTERISTIC. Regression guard.
+{
+    const hapPerms = hap.Perms || (hap.Characteristic && hap.Characteristic.Perms);
+    const PR = hapPerms.PAIRED_READ;
+    let checked = 0;
+    let bad = [];
+    for (const name of Object.keys(eDomoticzServices)) {
+        const Ctor = eDomoticzServices[name];
+        if (typeof Ctor !== 'function' || !(Ctor.prototype instanceof hap.Characteristic)) continue;
+        const inst = new Ctor();
+        checked++;
+        const perms = (inst.props && inst.props.perms) || [];
+        if (perms.some(function (x) { return x == null; }) || perms.indexOf(PR) === -1) {
+            bad.push(name + ' perms=' + JSON.stringify(perms));
+        }
+    }
+    if (bad.length) {
+        failed++;
+        console.error('  FAIL perms invariant: ' + bad.length + ' custom Characteristic(s) not readable / have null perms:');
+        bad.forEach(function (b) { console.error('         ' + b); });
+    } else {
+        console.log('  OK   perms invariant: ' + checked + ' custom Characteristics all carry PAIRED_READ and no null perms');
+    }
+}
+
 // Assert the historical collision is preserved: same UUID across the 3
 // services, distinct subtypes.
 if (failed === 0 && collisionUUIDs.length === 3) {
