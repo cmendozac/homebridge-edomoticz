@@ -216,6 +216,18 @@ eDomoticzPlatform.prototype = {
         var uuid = platformAccessory.context.uuid;
         var eve = platformAccessory.context.eve;
 
+        // Cached characteristics come back with the perms that were persisted
+        // when the cache was written. A cache produced by 3.0.0-3.0.2 under
+        // HAP v2 carries perms [null, "ev"] on every custom characteristic,
+        // which makes iOS refuse to pair. Re-apply the canonical perms.
+        var pairedRead = (this.api.hap.Perms && this.api.hap.Perms.PAIRED_READ)
+            || (Characteristic.Perms && Characteristic.Perms.PAIRED_READ)
+            || 'pr';
+        var healed = Helper.healCustomCharacteristicPerms(platformAccessory, eDomoticzServices, Characteristic, pairedRead);
+        if (healed > 0) {
+            this.log("Repaired " + healed + " cached custom characteristic perms on " + device.Name);
+        }
+
         // Generate the already cached accessory again
         var accessory = new eDomoticzAccessory(this, platformAccessory, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareID, device.HardwareTypeVal, device.Image, eve, device.HaveTimeout, device.Description);
         this.accessories.push(accessory);
