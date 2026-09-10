@@ -5,6 +5,14 @@ All notable changes to this fork.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning [SemVer](https://semver.org/).
 
+## [3.0.3] - 2026-09-11
+
+### Fixed
+- **Bridge could not be paired from a clean install under Homebridge 2.x** ("Unable to Add Accessory - Accessory out of compliance", or "Accessory not reachable" on newer iOS builds). HAP-NodeJS v2 removed the deprecated `Perms.READ` / `Perms.WRITE` aliases (only `PAIRED_READ` / `PAIRED_WRITE` remain), so every custom Characteristic in `lib/services.js` was published with `perms: [null, "ev"]`, i.e. without read permission. iOS rejects the whole bridge as soon as one Domoticz device lands on a custom eDomoticz service (power/gas/water meters, barometer, wind, UV, rain, visibility, solar radiation, info text, temperature override, or the generic fallthrough meter service). HAP-NodeJS itself also refused reads on those characteristics with `WRITE_ONLY_CHARACTERISTIC`. Existing installs paired under HAP v1 were unaffected because iOS caches the accessory structure and does not re-validate it. Fixed by switching to `Perms.PAIRED_READ` / `Perms.PAIRED_WRITE`, which exist with identical wire values in HAP v1 as well, so Homebridge 1.x compatibility is unchanged. Reported upstream on PR #297 by PatchworkBoy.
+
+### Added
+- Smoke test now instantiates every custom Characteristic and fails if any perms entry is null or `PAIRED_READ` is missing.
+
 ## [3.0.2] - 2026-05-25
 
 ### Fixed
